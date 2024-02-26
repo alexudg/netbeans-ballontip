@@ -20,6 +20,9 @@ public class ErrorProvider {
     static int time;  
 
     public static void setError(Component component, String message) {
+        final int PADDING_HOR = 30;
+        final int PADDING_VER = 10;
+        
         if (win == null) {
             tmrHide = new Timer(2000, new ActionListener() {
 
@@ -39,7 +42,7 @@ public class ErrorProvider {
                 public void actionPerformed(ActionEvent evt) {
                     System.out.println("TimerOpacity");
                     time -= 100;
-                    win.setOpacity((float) (time * 0.001)); // 0.9,0.8...,0.1
+                    win.setOpacity((float) (time * 0.001)); // 0.9,0.8,...,0.1
                     if (time == 100) {
                         tmrOpacity.stop();
                         win.dispose();
@@ -58,42 +61,43 @@ public class ErrorProvider {
         win.setBackground(new Color(0, 0, 0, 0));
 
         // create panel
-        JPanel p = new JPanel() {
+        JPanel p = new JPanel() {            
+                       
             @Override
             public void paintComponent(Graphics g) {
                 int w = g.getFontMetrics().stringWidth(message);
                 int h = g.getFontMetrics().getHeight();
-                                
+                
                 // fill rect
                 g.setColor(Color.PINK);
-                g.fillRect(4, 4, w + 30, h + 10);
+                g.fillRect(4, 4, w + PADDING_HOR, h + PADDING_VER);                
 
                 // line rect
                 g.setColor(Color.RED);
-                g.drawRect(4, 4, w + 30, h + 10);
-
-                // set the color of text
-                g.setColor(Color.BLACK);
-                g.drawString(message, 20, 22);
-
-                // draw the shadow of the toast 
-                int t = 250; // tranparent
+                g.drawRect(4, 4, w + PADDING_HOR, h + PADDING_VER);
+                
+                // draw 3 lines of shadow of the toast 
+                int t = 240; // tranparent
                 for (int i = 0; i < 4; i++) {
-                    t -= 60;
+                    t -= 60; // 180, 120, 60
                     g.setColor(new Color(255, 0, 0, t));
                     g.drawRect(
                             3 - i, // x
                             3 - i, // y
-                            w + 30 + i * 2, // w 
-                            h + 10 + i * 2  // h
+                            w + PADDING_HOR + (i + 1) * 2, // w 
+                            h + PADDING_VER + (i + 1) * 2  // h
                     );
-                }               
+                }  
+                
+                // set the color of text
+                g.setColor(Color.BLACK);
+                g.drawString(message, 20, 22);                             
             }
         };        
         int w = p.getFontMetrics(p.getFont()).stringWidth(message);
         int h = p.getFontMetrics(p.getFont()).getHeight();
         win.add(p);
-        win.setSize(w + 30 + 6, h + 10 + 6); // 3: lines of shadow by side
+        win.setSize(w + PADDING_HOR + 8, h + PADDING_VER + 8);
         win.setLocation(component.getLocation());        
         //win.setOpacity(1);
         win.setVisible(true);
